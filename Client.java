@@ -42,19 +42,27 @@ public class Client {
 
         try {
             ServerSocket serverSocket = new ServerSocket(8091);
+            System.out.println("en attente du l'agent");
 
-            while (true) {
+            // while (true) {
 
-                System.out.println("en attente du l'agent");
+                
 
                 
                 Socket socket = serverSocket.accept();
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                Agent agent = (Agent) ois.readObject();
+                byte[] agentBytes = (byte[]) ois.readObject();
+                AgentClassLoader loader = new AgentClassLoader();
+                Class<?> agentClass = loader.loadClassFromBytes("AgentImpl", agentBytes);
+                Agent agent = (AgentImpl) ois.readObject();
+                System.out.println("reading agent object...");
                 agent.main();
-                ois.close();
 
-            }
+                // Agent agent = (Agent) ois.readObject();
+                // agent.main();
+                // ois.close();
+
+            // }
         } catch (Exception e) {
             System.out.println("Erreur dans la reception d'agent: " + e.getMessage());
         }

@@ -27,13 +27,13 @@ public class AgentImpl implements Agent {
 
         if (nextServerIndex == 0) {
             System.out.println("Agent Starting its journey...");
-            nextServerIndex ++;
+            this.nextServerIndex = 1;
             move("Server1");
 
         } else if (nextServerIndex == 1) {
             System.out.println("Agent arrived at Server1");
             // Perform some task at Server1
-            nextServerIndex ++;
+            this.nextServerIndex = 2;
             move("Server2");
 
         } else if (nextServerIndex == 2) {
@@ -61,8 +61,9 @@ public class AgentImpl implements Agent {
             Socket socket = new Socket("localhost", Servers.get(destination));
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(agentCode);
+            oos.writeObject(this);
             oos.flush();
-            
+
         } catch (Exception e) {
             System.out.println("Erreur lors du deplacement de l'agent vers " + destination + " : " + e.getMessage());
         }
@@ -75,6 +76,10 @@ public class AgentImpl implements Agent {
         System.out.println("Returning to Client");
         try {
             Socket socket = new Socket("localhost", 8091);
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(agentCode);
+            oos.writeObject(this);
+            oos.flush();
         } catch (Exception e) {
             System.out.println("Erreur lors du retour de l'agent vers le client : " + e.getMessage());
         }

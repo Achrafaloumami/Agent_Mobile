@@ -19,22 +19,26 @@ public class Server1 {
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                 
                 byte[] agentBytes = (byte[]) ois.readObject();
+                System.out.println("reading agent bytes...");
+                // AgentImpl agent = (AgentImpl) ois.readObject();
+                // System.out.println("reading agent object...");
 
                 AgentClassLoader loader = new AgentClassLoader();
                 Class<?> agentClass = loader.loadClassFromBytes("AgentImpl", agentBytes);
-                Agent agent = (Agent) agentClass.getDeclaredConstructor().newInstance();
+                System.out.println("loading agent class...");
+
+                // recuperation de l'agent envoyé dans la socket
+                Agent agent = (AgentImpl) ois.readObject();
+                System.out.println("reading agent object...");
+                // AgentImpl agent = (AgentImpl) ois.readObject();
+                // System.out.println("reading agent object...");
+
                 agent.main();
-
-                System.out.println("Reception des bytes de l'agent:" + agentBytes);
+                System.out.println("executing agent...");
+                //System.out.println("Reception des bytes de l'agent:" + agentBytes);
                 
                 
-                // Agent agent = (Agent) ois.readObject();
-                // agent.main();
-
-                Socket socket2 = new Socket("localhost", 8082);
-                ObjectOutputStream oos = new ObjectOutputStream(socket2.getOutputStream());
-                oos.writeObject(agent);
-                oos.flush();
+    
                 
                 
             }
