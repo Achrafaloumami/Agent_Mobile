@@ -17,9 +17,14 @@ public class Client {
         try {
             System.out.println("lancement du agent");
         
-            byte[] agentCode = Files.readAllBytes(Paths.get("AgentImpl.class"));
+            // byte[] agentCode = Files.readAllBytes(Paths.get("AgentImpl.class"));
 
-            AgentImpl agent = new AgentImpl(agentCode);
+            byte[] jarBytes = Files.readAllBytes(Paths.get("agents/agent.jar"));
+
+            AgentImpl agent = new AgentImpl(jarBytes);
+
+
+            
             agent.main();
 
             // Socket socket = new Socket("localhost", 8081);
@@ -51,11 +56,15 @@ public class Client {
                 
                 Socket socket = serverSocket.accept();
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                byte[] agentBytes = (byte[]) ois.readObject();
-                AgentClassLoader loader = new AgentClassLoader();
-                Class<?> agentClass = loader.loadClassFromBytes("AgentImpl", agentBytes);
+
+                // byte[] agentBytes = (byte[]) ois.readObject();
+                // AgentClassLoader loader = new AgentClassLoader();
+                // Class<?> agentClass = loader.loadClassFromBytes("AgentImpl", agentBytes);
+
+
                 Agent agent = (AgentImpl) ois.readObject();
                 System.out.println("reading agent object...");
+
                 agent.main();
 
                 // Agent agent = (Agent) ois.readObject();
