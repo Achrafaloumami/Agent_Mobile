@@ -1,26 +1,20 @@
 
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.util.HashMap;
 
-public class AgentCompressor implements Agent {
+public class AgentCompressor extends AgentImpl {
 
-    private HashMap<String, Integer> Servers = new HashMap<>();
     private int nextServerIndex = 0;
-    private byte[] jarBytes;
     private byte[] resultat;
     private String filename;
     
 
     public AgentCompressor(byte[] jarBytes, String filename) {
-        this.jarBytes = jarBytes;
+        super(jarBytes);
         this.filename = filename;
         Servers.put("Server", 8081);
-        
     }
 
 
-    @Override
+    
     public byte[] getResultat() {
         return this.resultat;
     }
@@ -31,7 +25,6 @@ public class AgentCompressor implements Agent {
 
     @Override
     public void main() {
-        // System.out.println("Agent is running");
 
         if (nextServerIndex == 0) {
             System.out.println("Agent Starting its journey...");
@@ -41,9 +34,6 @@ public class AgentCompressor implements Agent {
         } else if (nextServerIndex == 1) {
             System.out.println("Agent arrived at Server");
             // Perform some task at Server
-
-
-            
 
             try {
                 System.out.println("Compressing file: " + this.filename);
@@ -55,7 +45,6 @@ public class AgentCompressor implements Agent {
             }
 
             
-
             // Prepare to return to Client
 
             nextServerIndex ++;
@@ -73,44 +62,6 @@ public class AgentCompressor implements Agent {
 
     }
 
-
-    public void move(String destination) {
-        // Logic for moving the agent
-        System.out.println("Moving to " + destination);
-        try {
-            Socket socket = new Socket("localhost", Servers.get(destination));
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(jarBytes);
-            oos.writeObject(this);
-            oos.flush();
-
-        } catch (Exception e) {
-            System.out.println("Erreur lors du deplacement de l'agent vers " + destination + " : " + e.getMessage());
-        }
-        
-    }
-
-
-    public void back() {
-        // Logic for returning to the client
-        System.out.println("Returning to Client");
-        try {
-            Socket socket = new Socket("localhost", 8091);
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            // oos.writeObject(jarBytes);
-            oos.writeObject(this);
-            oos.flush();
-        } catch (Exception e) {
-            System.out.println("Erreur lors du retour de l'agent vers le client : " + e.getMessage());
-        }
-    }
-
-    
-
-
-
-    
-    
 }
 
 
