@@ -3,29 +3,26 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 
-public class AgentImpl implements Agent {
+public class AgentCompressor implements Agent {
 
     private HashMap<String, Integer> Servers = new HashMap<>();
     private int nextServerIndex = 0;
     private byte[] jarBytes;
-    private int resultat;
-    private int a;
-    private int b;
+    private byte[] resultat;
+    private String filename;
+    
 
-
-    public AgentImpl(byte[] jarBytes) {
+    public AgentCompressor(byte[] jarBytes, String filename) {
         this.jarBytes = jarBytes;
-        Servers.put("Server1", 8081);
-        Servers.put("Server2", 8082);
+        this.filename = filename;
+        Servers.put("Server", 8081);
+        
     }
 
 
-    public void seta(int a) {
-        this.a = a;
-    }
-
-    public void setb(int b) {
-        this.b = b;
+    @Override
+    public byte[] getResultat() {
+        return this.resultat;
     }
 
 
@@ -39,29 +36,25 @@ public class AgentImpl implements Agent {
         if (nextServerIndex == 0) {
             System.out.println("Agent Starting its journey...");
             this.nextServerIndex = 1;
-            move("Server1");
+            move("Server");
 
         } else if (nextServerIndex == 1) {
-            System.out.println("Agent arrived at Server1");
+            System.out.println("Agent arrived at Server");
+            // Perform some task at Server
 
 
-            // Perform some task at Server1
+            
 
-            Hello hello = new Hello();
-            hello.sayHrello();
+            try {
+                System.out.println("Compressing file: " + this.filename);
+                this.resultat = Compresser.compress("data/" + this.filename);
+                System.out.println("File compressed");
+            } catch (Exception e) {
+                System.out.println("Erreur lors de la compression du fichier: " + e.getMessage());
+                e.printStackTrace();
+            }
 
-            // Prepare to move to Server2
-
-
-
-            this.nextServerIndex = 2;
-            move("Server2");
-
-        } else if (nextServerIndex == 2) {
-            System.out.println("Agent arrived at Server2");
-            // Perform some task at Server2
-            Operation operation = new Operation(this.a, this.b);
-            this.resultat = operation.add();
+            
 
             // Prepare to return to Client
 

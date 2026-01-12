@@ -3,17 +3,17 @@ import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server2 {
+public class Server1 {
 
     public static void main(String[] args) {
 
-        System.out.println("Server2 started on port 8082");
+        System.out.println("Server1 started on port 8081");
 
-        try (ServerSocket serverSocket = new ServerSocket(8082)) {
+        try (ServerSocket serverSocket = new ServerSocket(8081)) {
 
             while (true) {
 
-                System.out.println("Server2 waiting for agent...");
+                System.out.println("Server1 waiting for agent...");
                 Socket socket = serverSocket.accept();
 
                 
@@ -31,13 +31,41 @@ public class Server2 {
 
 
                 // 4. Charger dynamiquement les classes depuis le JAR
-                JarClassLoader jarLoader = new JarClassLoader(jarBytes, Server2.class.getClassLoader());
+                JarClassLoader jarLoader = new JarClassLoader(jarBytes, Server1.class.getClassLoader());
+                
+                // 5. Charger la classe de l'agent avec le JarClassLoader
+                // Class<?> agentClass = jarLoader.loadAgentClass(agent.getClass().getName());
+
+
+
+
+
+                // Object agent = ois.readObject();
+
+                // Method main = agent.getClass().getMethod("main");
+                // main.invoke(agent);
+
+        
+
+                // ObjectInputStream agentStream = new ObjectInputStream(socket.getInputStream()) {
+                //     @Override
+                //     protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+                //         return jarLoader.loadClass(desc.getName());
+                //     }
+                // };
+
+                // Injecter le JarClassLoader dans l'ObjectInputStream
+                
                 
                 ois.setCustomLoader(jarLoader);
             
 
                 Object agent = ois.readObject();
                 Method m = agent.getClass().getMethod("main");
+
+
+
+                
 
                 m.invoke(agent);
 
@@ -76,75 +104,3 @@ public class Server2 {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import java.io.*;
-// import java.net.ServerSocket;
-// import java.net.Socket;
-
-// public class Server2 {
-
-//     public static void main(String[] args) {
-//         System.out.println("Server2 started");
-//         try {
-//             ServerSocket server2socket = new ServerSocket(8082);
-
-//             while (true) {
-//                 System.out.println("Server2 en attente de l'agent");
-//                 Socket socket = server2socket.accept();
-//                 System.out.println("Connexion acceptee du client: ");
-//                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                
-//                 byte[] agentBytes = (byte[]) ois.readObject();
-
-//                 AgentClassLoader loader = new AgentClassLoader();
-//                 Class<?> agentClass = loader.loadClassFromBytes("AgentImpl", agentBytes);
-
-//                 Agent agent = (AgentImpl) ois.readObject();
-//                 System.out.println("reading agent object...");
-//                 agent.main();
-
-//                 //System.out.println("Reception des bytes de l'agent:" + agentBytes);
-                
-                
-    
-                
-                
-//             }
-
-//         } catch (Exception e) {
-//             System.out.println("Erreur dans Server2: " + e.getMessage());
-//         }
-
-        
-
-
-
-//     }
-    
-// }
